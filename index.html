@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitPulse · interactive fitness</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0f17 0%, #1a1f2c 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .app-card {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(22, 28, 40, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 3rem;
+      padding: 2rem 2rem 2.5rem;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+      color: #eef3fc;
+      transition: all 0.2s;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #9effa0, #4effd0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .subhead {
+      font-size: 1rem;
+      color: #a0b3cf;
+      margin-bottom: 2rem;
+      border-left: 4px solid #4effd0;
+      padding-left: 1rem;
+      font-weight: 300;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.8rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 700px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .app-card {
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* left panel – activity & stats */
+    .activity-panel {
+      background: rgba(12, 18, 28, 0.7);
+      border-radius: 2rem;
+      padding: 1.6rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #7e91af;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .stat-card {
+      background: #141b26;
+      border-radius: 1.5rem;
+      padding: 1rem 1rem 1.1rem;
+      border: 1px solid #232b38;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #8d9fb9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .stat-unit {
+      font-size: 0.9rem;
+      color: #93a8c9;
+      margin-left: 4px;
+      font-weight: 400;
+    }
+
+    .progress-section {
+      margin-top: 0.5rem;
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #b7c7e0;
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-bar-bg {
+      background: #1e2632;
+      height: 12px;
+      border-radius: 30px;
+      overflow: hidden;
+      margin-bottom: 1.4rem;
+      box-shadow: inset 0 1px 4px #00000055;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7dffb0, #3ae0c0);
+      border-radius: 30px;
+      transition: width 0.25s ease;
+      box-shadow: 0 0 10px #4effd0aa;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      border: none;
+      background: #1e2a3a;
+      padding: 0.7rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #d3e2fd;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+      border: 1px solid #2f3e52;
+      flex: 1 0 auto;
+      box-shadow: 0 5px 8px #00000033;
+    }
+
+    .btn:hover {
+      background: #263547;
+      border-color: #4b607c;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 15px #00000055;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 5px #000;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2a6f5c, #1f8a70);
+      border-color: #2bbd9b;
+      color: white;
+      box-shadow: 0 5px 15px #1f8a7055;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #308e75, #26a384);
+      border-color: #4effd0;
+    }
+
+    /* right panel – interactive controls */
+    .control-panel {
+      background: rgba(12, 18, 28, 0.7);
+      border-radius: 2rem;
+      padding: 1.6rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .exercise-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .exercise-option {
+      background: #131b25;
+      border-radius: 1.5rem;
+      padding: 0.9rem 1.2rem;
+      border: 1px solid #28313f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .exercise-option:hover {
+      background: #1c2737;
+      border-color: #3f5068;
+    }
+
+    .exercise-option.active {
+      background: #1d3342;
+      border: 1px solid #4effd0;
+      box-shadow: 0 0 15px #4effd044;
+    }
+
+    .exercise-emoji {
+      font-size: 1.8rem;
+      margin-right: 0.8rem;
+    }
+
+    .exercise-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      flex: 1;
+      color: #e2edff;
+    }
+
+    .exercise-cal {
+      font-size: 0.8rem;
+      color: #85e0c0;
+      background: #10222b;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-weight: 500;
+    }
+
+    .timer-area {
+      background: #0e141e;
+      border-radius: 2rem;
+      padding: 1.2rem 1rem 1.5rem;
+      text-align: center;
+      border: 1px solid #27303f;
+      margin-bottom: 1.2rem;
+    }
+
+    .timer-display {
+      font-size: 3.8rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 4px;
+      color: #b7f0e0;
+      text-shadow: 0 0 20px #4effd066;
+      line-height: 1;
+      margin: 0.2rem 0 0.5rem;
+    }
+
+    .timer-label {
+      color: #8ea3c2;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .timer-btn {
+      background: #1d2634;
+      border: 1px solid #33455e;
+      color: #d0e0ff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-btn:hover {
+      background: #27364a;
+      border-color: #4a6a8c;
+    }
+
+    .timer-btn:active {
+      transform: scale(0.95);
+    }
+
+    .timer-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      background: #1a1f28;
+      border-color: #2a3442;
+    }
+
+    .calorie-badge {
+      background: #1a2c33;
+      border-radius: 40px;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #2e4b4b;
+      color: #b1f0dd;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .calorie-value {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #9effc4;
+    }
+
+    .reset-area {
+      margin-top: 1rem;
+      text-align: right;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid #394f63;
+      color: #9bb1cc;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.15s;
+      font-weight: 500;
+    }
+
+    .reset-btn:hover {
+      background: #1e2b38;
+      color: #c6d9ff;
+      border-color: #607a99;
+    }
+
+    .footer-note {
+      margin-top: 1.8rem;
+      font-size: 0.75rem;
+      text-align: center;
+      color: #4b5c74;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+<div class="app-card">
+  <h1>⚡ FIT<span>PULSE</span></h1>
+  <div class="subhead">interactive fitness tracker · real-time feedback</div>
+
+  <div class="dashboard">
+    <!-- LEFT PANEL: stats & progress -->
+    <div class="activity-panel">
+      <div class="panel-title">
+        <span>📊 TODAY'S STATS</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Calories burned</div>
+          <div class="stat-value" id="caloriesBurnedDisplay">0<span class="stat-unit">kcal</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active minutes</div>
+          <div class="stat-value" id="activeMinutesDisplay">0<span class="stat-unit">min</span></div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="goal-header">
+          <span>🔥 Daily goal</span>
+          <span id="goalProgressText">0 / 300 kcal</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn" id="quickAddCalories" title="Add 25 kcal">➕ 25 kcal</button>
+        <button class="btn" id="quickAddMinute" title="Add 1 active minute">⏱️ +1 min</button>
+        <button class="btn btn-primary" id="completeWorkoutBtn">🏁 Complete workout</button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: interactive timer + exercises -->
+    <div class="control-panel">
+      <div class="exercise-selector" id="exerciseSelector">
+        <div class="exercise-option active" data-exercise="running" data-rate="10" data-emoji="🏃">
+          <span class="exercise-emoji">🏃</span>
+          <span class="exercise-name">Running</span>
+          <span class="exercise-cal">10 kcal/min</span>
+        </div>
+        <div class="exercise-option" data-exercise="cycling" data-rate="8" data-emoji="🚴">
+          <span class="exercise-emoji">🚴</span>
+          <span class="exercise-name">Cycling</span>
+          <span class="exercise-cal">8 kcal/min</span>
+        </div>
+        <div class="exercise-option" data-exercise="yoga" data-rate="4" data-emoji="🧘">
+          <span class="exercise-emoji">🧘</span>
+          <span class="exercise-name">Yoga</span>
+          <span class="exercise-cal">4 kcal/min</span>
+        </div>
+        <div class="exercise-option" data-exercise="hiit" data-rate="12" data-emoji="💥">
+          <span class="exercise-emoji">💥</span>
+          <span class="exercise-name">HIIT</span>
+          <span class="exercise-cal">12 kcal/min</span>
+        </div>
+      </div>
+
+      <div class="timer-area">
+        <div class="timer-label">SESSION TIMER</div>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn" id="startTimerBtn">▶ START</button>
+          <button class="timer-btn" id="pauseTimerBtn" disabled>⏸ PAUSE</button>
+          <button class="timer-btn" id="resetTimerBtn">↺ RESET</button>
+        </div>
+      </div>
+
+      <div class="calorie-badge">
+        <span>🔥 BURN RATE</span>
+        <span class="calorie-value" id="currentBurnRate">10</span>
+        <span>kcal/min</span>
+      </div>
+
+      <div class="reset-area">
+        <button class="reset-btn" id="resetAllStats">reset all stats</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    ⚡ click exercise · start timer · watch calories grow
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- STATE ----------
+    let totalCalories = 0;               // total kcal burned
+    let totalActiveSeconds = 0;          // total active seconds (for minutes display)
+    const DAILY_GOAL = 300;              // kcal
+
+    // timer state
+    let timerInterval = null;
+    let timerSeconds = 0;               // current session timer in seconds
+    let isTimerRunning = false;
+
+    // selected exercise (default running)
+    let selectedExercise = {
+      name: 'running',
+      rate: 10,          // kcal per minute
+      emoji: '🏃'
+    };
+
+    // DOM elements
+    const caloriesBurnedDisplay = document.getElementById('caloriesBurnedDisplay');
+    const activeMinutesDisplay = document.getElementById('activeMinutesDisplay');
+    const goalProgressText = document.getElementById('goalProgressText');
+    const progressFill = document.getElementById('progressFill');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const currentBurnRate = document.getElementById('currentBurnRate');
+
+    const startBtn = document.getElementById('startTimerBtn');
+    const pauseBtn = document.getElementById('pauseTimerBtn');
+    const resetTimerBtn = document.getElementById('resetTimerBtn');
+    const resetAllStatsBtn = document.getElementById('resetAllStats');
+
+    const quickAddCalories = document.getElementById('quickAddCalories');
+    const quickAddMinute = document.getElementById('quickAddMinute');
+    const completeWorkoutBtn = document.getElementById('completeWorkoutBtn');
+
+    const exerciseOptions = document.querySelectorAll('.exercise-option');
+
+    // ---------- HELPER FUNCTIONS ----------
+    function formatTime(sec) {
+      const mins = Math.floor(sec / 60);
+      const remainingSec = sec % 60;
+      return `${mins.toString().padStart(2, '0')}:${remainingSec.toString().padStart(2, '0')}`;
+    }
+
+    // update all UI stats (calories, minutes, goal, progress bar)
+    function updateStatsUI() {
+      // calories display (round to integer)
+      caloriesBurnedDisplay.innerHTML = `${Math.floor(totalCalories)}<span class="stat-unit">kcal</span>`;
+      
+      // active minutes: show full minutes (floor) from totalActiveSeconds
+      const activeMinutes = Math.floor(totalActiveSeconds / 60);
+      activeMinutesDisplay.innerHTML = `${activeMinutes}<span class="stat-unit">min</span>`;
+      
+      // daily goal progress
+      const progressPercent = Math.min((totalCalories / DAILY_GOAL) * 100, 100);
+      progressFill.style.width = `${progressPercent}%`;
+      goalProgressText.textContent = `${Math.floor(totalCalories)} / ${DAILY_GOAL} kcal`;
+    }
+
+    // update timer display from timerSeconds
+    function updateTimerDisplay() {
+      timerDisplay.textContent = formatTime(timerSeconds);
+    }
+
+    // update the UI when exercise changes (burn rate + active class)
+    function updateExerciseUI() {
+      // update burn rate display
+      currentBurnRate.textContent = selectedExercise.rate;
+
+      // update active class on options
+      exerciseOptions.forEach(opt => {
+        const ex = opt.dataset.exercise;
+        if (ex === selectedExercise.name) {
+          opt.classList.add('active');
+        } else {
+          opt.classList.remove('active');
+        }
+      });
+    }
+
+    // add calories (and optionally active seconds) with real-time sync
+    function addCalories(amount, activeSecondsToAdd = 0) {
+      if (amount <= 0 && activeSecondsToAdd <= 0) return;
+
+      totalCalories = Math.min(totalCalories + amount, 9999); // cap to avoid overflow
+      if (activeSecondsToAdd > 0) {
+        totalActiveSeconds += activeSecondsToAdd;
+      }
+      updateStatsUI();
+    }
+
+    // central tick function called every second when timer is running
+    function timerTick() {
+      if (!isTimerRunning) return; // safety
+
+      // increase session timer
+      timerSeconds += 1;
+      updateTimerDisplay();
+
+      // calculate calories burned this second
+      const caloriesPerSecond = selectedExercise.rate / 60;
+      const caloriesThisTick = caloriesPerSecond;   // fractional
+      
+      // accumulate calories and active seconds
+      totalCalories += caloriesThisTick;            // fractional calories
+      totalActiveSeconds += 1;                      // 1 second of activity
+
+      // keep UI in sync
+      updateStatsUI();
+    }
+
+    // start timer
+    function startTimer() {
+      if (isTimerRunning) return;
+      if (timerInterval) clearInterval(timerInterval);
+
+      isTimerRunning = true;
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+
+      timerInterval = setInterval(() => {
+        timerTick();
+      }, 1000);
+    }
+
+    // pause timer
+    function pauseTimer() {
+      if (!isTimerRunning) return;
+      isTimerRunning = false;
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // reset session timer (not stats)
+    function resetTimer() {
+      // if running, stop it
+      if (isTimerRunning) {
+        pauseTimer(); // this also clears interval
+      }
+      // reset timer seconds
+      timerSeconds = 0;
+      updateTimerDisplay();
+      // re-enable start, disable pause
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    // reset ALL stats (calories, minutes, timer)
+    function resetAllStats() {
+      // stop timer if running
+      if (isTimerRunning) {
+        pauseTimer();
+      }
+      // reset stats
+      totalCalories = 0;
+      totalActiveSeconds = 0;
+      timerSeconds = 0;
+      
+      // update UI
+      updateStatsUI();
+      updateTimerDisplay();
+      
+      // ensure buttons reflect reset state
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    // complete workout: add calories from current session based on timer, then reset timer
+    function completeWorkout() {
+      // if timer is running, pause first to avoid race
+      if (isTimerRunning) {
+        pauseTimer();
+      }
+
+      // if there is a running session (timerSeconds > 0), we can add a "bonus" or just keep the already accumulated calories.
+      // but the calories are already being added per second in real time.
+      // To make the button useful, we'll add a small bonus: 5 extra calories for completing.
+      // and also reset the timer.
+      if (timerSeconds > 0) {
+        addCalories(5, 0);  // +5 kcal bonus
+      }
+      
+      // reset session timer (but keep accumulated stats)
+      timerSeconds = 0;
+      updateTimerDisplay();
+
+      // reset timer state
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+
+      // optional: flash feedback
+      completeWorkoutBtn.textContent = '✔ DONE!';
+      setTimeout(() => {
+        completeWorkoutBtn.textContent = '🏁 Complete workout';
+      }, 800);
+    }
+
+    // ---------- EVENT LISTENERS ----------
+
+    // exercise selection
+    exerciseOptions.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        const name = opt.dataset.exercise;
+        const rate = parseFloat(opt.dataset.rate);
+        const emoji = opt.dataset.emoji || '🏋️';
+
+        // update selected exercise
+        selectedExercise = { name, rate, emoji };
+        
+        // update UI (burn rate & active class)
+        updateExerciseUI();
+
+        // if timer is running, new calorie rate applies automatically on next tick
+      });
+    });
+
+    // start / pause / reset timer
+    startBtn.addEventListener('click', startTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    resetTimerBtn.addEventListener('click', resetTimer);
+
+    // quick add calories (25 kcal, no active seconds)
+    quickAddCalories.addEventListener('click', () => {
+      addCalories(25, 0);
+    });
+
+    // quick add 1 minute of activity (60 seconds active)
+    quickAddMinute.addEventListener('click', () => {
+      totalActiveSeconds += 60;
+      // optionally add some calories? but it's "active minute" not calorie addition
+      // just add active time to keep the stat realistic, but no calorie change.
+      // However we can add a tiny bit?  keep simple: only add active seconds.
+      // but to keep stats consistent, we'll add 0 calories.
+      updateStatsUI();
+    });
+
+    // complete workout button
+    completeWorkoutBtn.addEventListener('click', completeWorkout);
+
+    // reset all stats
+    resetAllStatsBtn.addEventListener('click', resetAllStats);
+
+    // ---------- INITIAL SETUP ----------
+    function initialise() {
+      // set default exercise (running) - already selected, but ensure UI sync
+      updateExerciseUI();
+      
+      // set initial stats display
+      updateStatsUI();
+      
+      // timer display
+      updateTimerDisplay();
+
+      // ensure buttons correct
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      
+      // set burn rate display
+      currentBurnRate.textContent = selectedExercise.rate;
+
+      // add a tiny starting hint - no extra actions needed.
+    }
+
+    initialise();
+
+    // when page unload, clean interval
+    window.addEventListener('beforeunload', () => {
+      if (timerInterval) clearInterval(timerInterval);
+    });
+
+  })();
+</script>
+</body>
+</html>
