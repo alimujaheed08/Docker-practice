@@ -1,4 +1,5 @@
 FROM nginx
 EXPOSE 80
 MAINTAINER mujaheed
-LABELS this is fitness tracker app image
+LABEL this is train ticket booking image
+COPY index.html /usr/share/nginx/html
