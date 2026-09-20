@@ -1,774 +1,824 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitPulse · interactive fitness</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailGo · interactive train ticket booking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
 
-    body {
-      background: linear-gradient(145deg, #0b0f17 0%, #1a1f2c 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #e9f0fc 0%, #d9e5f5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
 
-    .app-card {
-      max-width: 1000px;
-      width: 100%;
-      background: rgba(22, 28, 40, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 3rem;
-      padding: 2rem 2rem 2.5rem;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-      color: #eef3fc;
-      transition: all 0.2s;
-    }
+        .booking-card {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 20, 40, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem 2rem 2rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.2s;
+        }
 
-    h1 {
-      font-size: 2.3rem;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.25rem;
-    }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0a2540;
+            letter-spacing: -0.02em;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(10, 37, 64, 0.1);
+            margin-bottom: 1.75rem;
+        }
 
-    h1 span {
-      background: linear-gradient(135deg, #9effa0, #4effd0);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 700;
-    }
+        h1 span {
+            background: #0a2540;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            margin-left: auto;
+            background: #1b4a7a;
+        }
 
-    .subhead {
-      font-size: 1rem;
-      color: #a0b3cf;
-      margin-bottom: 2rem;
-      border-left: 4px solid #4effd0;
-      padding-left: 1rem;
-      font-weight: 300;
-    }
+        .search-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto auto;
+            gap: 0.75rem;
+            align-items: center;
+            background: white;
+            padding: 1.25rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 8px 18px -8px rgba(0, 20, 40, 0.2);
+            margin-bottom: 2rem;
+            border: 1px solid #ffffff;
+        }
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1.8rem;
-      margin-bottom: 2rem;
-    }
+        .station-input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
 
-    @media (max-width: 700px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .app-card {
-        padding: 1.5rem;
-      }
-      h1 {
-        font-size: 1.8rem;
-      }
-    }
+        .station-input label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #56748f;
+            padding-left: 0.5rem;
+        }
 
-    /* left panel – activity & stats */
-    .activity-panel {
-      background: rgba(12, 18, 28, 0.7);
-      border-radius: 2rem;
-      padding: 1.6rem 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-    }
+        .station-input select, 
+        .station-input input {
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #0a2540;
+            padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            outline: 2px solid transparent;
+            transition: 0.15s;
+            cursor: pointer;
+            width: 100%;
+        }
 
-    .panel-title {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #7e91af;
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+        .station-input select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2356748f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1rem;
+            padding-right: 1.8rem;
+        }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.9rem;
-      margin-bottom: 1.8rem;
-    }
+        .station-input select:hover,
+        .station-input input:hover {
+            background-color: #f2f7ff;
+        }
 
-    .stat-card {
-      background: #141b26;
-      border-radius: 1.5rem;
-      padding: 1rem 1rem 1.1rem;
-      border: 1px solid #232b38;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-    }
+        .station-input select:focus,
+        .station-input input:focus {
+            outline: 2px solid #1b4a7a;
+            background-color: #ffffff;
+        }
 
-    .stat-label {
-      font-size: 0.75rem;
-      color: #8d9fb9;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 500;
-    }
+        .swap-icon {
+            background: #eef3fa;
+            width: 2.8rem;
+            height: 2.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            color: #1b4a7a;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 1rem;
+        }
 
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #fff;
-    }
+        .swap-icon:hover {
+            background: #d9e5f5;
+            transform: rotate(180deg);
+        }
 
-    .stat-unit {
-      font-size: 0.9rem;
-      color: #93a8c9;
-      margin-left: 4px;
-      font-weight: 400;
-    }
+        .date-input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
 
-    .progress-section {
-      margin-top: 0.5rem;
-    }
+        .date-input label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #56748f;
+            padding-left: 0.5rem;
+        }
 
-    .goal-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      color: #b7c7e0;
-      margin-bottom: 0.4rem;
-    }
+        .date-input input {
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0a2540;
+            padding: 0.4rem 0.5rem;
+            border-radius: 30px;
+            outline: 2px solid transparent;
+            transition: 0.15s;
+            cursor: pointer;
+        }
 
-    .progress-bar-bg {
-      background: #1e2632;
-      height: 12px;
-      border-radius: 30px;
-      overflow: hidden;
-      margin-bottom: 1.4rem;
-      box-shadow: inset 0 1px 4px #00000055;
-    }
+        .date-input input:hover {
+            background-color: #f2f7ff;
+        }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #7dffb0, #3ae0c0);
-      border-radius: 30px;
-      transition: width 0.25s ease;
-      box-shadow: 0 0 10px #4effd0aa;
-    }
+        .date-input input:focus {
+            outline: 2px solid #1b4a7a;
+            background-color: #ffffff;
+        }
 
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-      margin-top: 1.5rem;
-    }
+        .search-btn {
+            background: #0a2540;
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 10px 18px -8px #0a2540;
+            margin-top: 1rem;
+        }
 
-    .btn {
-      border: none;
-      background: #1e2a3a;
-      padding: 0.7rem 1.2rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #d3e2fd;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
-      border: 1px solid #2f3e52;
-      flex: 1 0 auto;
-      box-shadow: 0 5px 8px #00000033;
-    }
+        .search-btn:hover {
+            background: #1b4a7a;
+            transform: scale(1.02);
+        }
 
-    .btn:hover {
-      background: #263547;
-      border-color: #4b607c;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 15px #00000055;
-    }
+        .search-btn:active {
+            transform: scale(0.98);
+        }
 
-    .btn:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 5px #000;
-    }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 0.25rem;
+        }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #2a6f5c, #1f8a70);
-      border-color: #2bbd9b;
-      color: white;
-      box-shadow: 0 5px 15px #1f8a7055;
-    }
+        .results-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0a2540;
+        }
 
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #308e75, #26a384);
-      border-color: #4effd0;
-    }
+        .results-header p {
+            color: #56748f;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.6);
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            border: 1px solid white;
+        }
 
-    /* right panel – interactive controls */
-    .control-panel {
-      background: rgba(12, 18, 28, 0.7);
-      border-radius: 2rem;
-      padding: 1.6rem 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+        .train-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+            margin-bottom: 0.5rem;
+        }
 
-    .exercise-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-bottom: 2rem;
-    }
+        .train-list::-webkit-scrollbar {
+            width: 6px;
+        }
 
-    .exercise-option {
-      background: #131b25;
-      border-radius: 1.5rem;
-      padding: 0.9rem 1.2rem;
-      border: 1px solid #28313f;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
-    }
+        .train-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.03);
+            border-radius: 10px;
+        }
 
-    .exercise-option:hover {
-      background: #1c2737;
-      border-color: #3f5068;
-    }
+        .train-list::-webkit-scrollbar-thumb {
+            background: #a0b9d0;
+            border-radius: 10px;
+        }
 
-    .exercise-option.active {
-      background: #1d3342;
-      border: 1px solid #4effd0;
-      box-shadow: 0 0 15px #4effd044;
-    }
+        .train-card {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 1.2fr auto;
+            align-items: center;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: 0.2s;
+            gap: 0.8rem;
+            backdrop-filter: blur(4px);
+        }
 
-    .exercise-emoji {
-      font-size: 1.8rem;
-      margin-right: 0.8rem;
-    }
+        .train-card:hover {
+            border-color: #b6d0e8;
+            box-shadow: 0 10px 22px -10px rgba(10, 37, 64, 0.25);
+            background: #ffffff;
+        }
 
-    .exercise-name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      flex: 1;
-      color: #e2edff;
-    }
+        .train-info {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .exercise-cal {
-      font-size: 0.8rem;
-      color: #85e0c0;
-      background: #10222b;
-      padding: 0.2rem 0.8rem;
-      border-radius: 30px;
-      font-weight: 500;
-    }
+        .train-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0a2540;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
 
-    .timer-area {
-      background: #0e141e;
-      border-radius: 2rem;
-      padding: 1.2rem 1rem 1.5rem;
-      text-align: center;
-      border: 1px solid #27303f;
-      margin-bottom: 1.2rem;
-    }
+        .train-number {
+            font-size: 0.75rem;
+            background: #eef3fa;
+            padding: 0.15rem 0.6rem;
+            border-radius: 40px;
+            color: #1b4a7a;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
 
-    .timer-display {
-      font-size: 3.8rem;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 4px;
-      color: #b7f0e0;
-      text-shadow: 0 0 20px #4effd066;
-      line-height: 1;
-      margin: 0.2rem 0 0.5rem;
-    }
+        .train-type {
+            font-size: 0.8rem;
+            color: #56748f;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
+        }
 
-    .timer-label {
-      color: #8ea3c2;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-    }
+        .timings {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
 
-    .timer-controls {
-      display: flex;
-      justify-content: center;
-      gap: 0.8rem;
-      margin-top: 0.8rem;
-      flex-wrap: wrap;
-    }
+        .depart, .arrive {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .timer-btn {
-      background: #1d2634;
-      border: 1px solid #33455e;
-      color: #d0e0ff;
-      padding: 0.6rem 1.5rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.1s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+        .time {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0a2540;
+            letter-spacing: -0.3px;
+        }
 
-    .timer-btn:hover {
-      background: #27364a;
-      border-color: #4a6a8c;
-    }
+        .station-code {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #56748f;
+            text-transform: uppercase;
+            background: #f0f5fc;
+            padding: 0.15rem 0.5rem;
+            border-radius: 40px;
+        }
 
-    .timer-btn:active {
-      transform: scale(0.95);
-    }
+        .duration {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #56748f;
+            background: #f8fbfe;
+            padding: 0.3rem 0.8rem;
+            border-radius: 60px;
+            min-width: 80px;
+            border: 1px dashed #cbdae7;
+        }
 
-    .timer-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      background: #1a1f28;
-      border-color: #2a3442;
-    }
+        .duration .arrow {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #1b4a7a;
+        }
 
-    .calorie-badge {
-      background: #1a2c33;
-      border-radius: 40px;
-      padding: 0.6rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #2e4b4b;
-      color: #b1f0dd;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
+        .price-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+        }
 
-    .calorie-value {
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: #9effc4;
-    }
+        .price {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #0a2540;
+            line-height: 1.2;
+        }
 
-    .reset-area {
-      margin-top: 1rem;
-      text-align: right;
-    }
+        .price small {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #56748f;
+        }
 
-    .reset-btn {
-      background: none;
-      border: 1px solid #394f63;
-      color: #9bb1cc;
-      padding: 0.4rem 1rem;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: 0.15s;
-      font-weight: 500;
-    }
+        .seats-left {
+            font-size: 0.7rem;
+            color: #c44536;
+            background: #ffeeed;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-weight: 600;
+        }
 
-    .reset-btn:hover {
-      background: #1e2b38;
-      color: #c6d9ff;
-      border-color: #607a99;
-    }
+        .book-btn {
+            background: #1b4a7a;
+            border: none;
+            color: white;
+            padding: 0.7rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 6px 12px -6px #0a2540;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
 
-    .footer-note {
-      margin-top: 1.8rem;
-      font-size: 0.75rem;
-      text-align: center;
-      color: #4b5c74;
-      letter-spacing: 0.3px;
-    }
-  </style>
+        .book-btn:hover {
+            background: #0a2540;
+            transform: scale(1.02);
+        }
+
+        .book-btn:active {
+            transform: scale(0.97);
+        }
+
+        .book-btn:disabled {
+            background: #b8c9da;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .selected-ticket {
+            margin-top: 1.8rem;
+            padding: 0.9rem 1.6rem;
+            background: #ffffffdd;
+            backdrop-filter: blur(6px);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ffffff;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+            font-size: 0.95rem;
+        }
+
+        .selected-ticket .label {
+            font-weight: 500;
+            color: #56748f;
+        }
+
+        .selected-ticket .value {
+            font-weight: 700;
+            color: #0a2540;
+            background: #eef3fa;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+
+        .feedback {
+            color: #1b4a7a;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feedback i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+
+        .no-trains {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 60px;
+            color: #56748f;
+            font-weight: 500;
+        }
+
+        @media (max-width: 850px) {
+            .booking-card {
+                padding: 1.5rem;
+            }
+            .search-section {
+                grid-template-columns: 1fr;
+                border-radius: 40px;
+                gap: 0.8rem;
+                padding: 1.2rem;
+            }
+            .swap-icon {
+                margin: 0 auto;
+                transform: rotate(90deg);
+            }
+            .swap-icon:hover {
+                transform: rotate(270deg);
+            }
+            .search-btn {
+                justify-content: center;
+                width: 100%;
+            }
+            .train-card {
+                grid-template-columns: 1fr;
+                border-radius: 40px;
+                padding: 1.2rem;
+                gap: 0.6rem;
+                text-align: center;
+            }
+            .timings {
+                justify-content: center;
+            }
+            .price-section {
+                align-items: center;
+            }
+            .book-btn {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app-card">
-  <h1>⚡ FIT<span>PULSE</span></h1>
-  <div class="subhead">interactive fitness tracker · real-time feedback</div>
+<div class="booking-card">
+    <h1>
+        🚆 RailGo
+        <span>live</span>
+    </h1>
 
-  <div class="dashboard">
-    <!-- LEFT PANEL: stats & progress -->
-    <div class="activity-panel">
-      <div class="panel-title">
-        <span>📊 TODAY'S STATS</span>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Calories burned</div>
-          <div class="stat-value" id="caloriesBurnedDisplay">0<span class="stat-unit">kcal</span></div>
+    <!-- interactive search & booking area -->
+    <div class="search-section">
+        <div class="station-input">
+            <label>From</label>
+            <select id="fromStation">
+                <option value="NDLS" selected>New Delhi (NDLS)</option>
+                <option value="BCT">Mumbai Central (BCT)</option>
+                <option value="HWH">Howrah (HWH)</option>
+                <option value="MAS">Chennai Central (MAS)</option>
+                <option value="SBC">Bengaluru (SBC)</option>
+                <option value="PUNE">Pune (PUNE)</option>
+                <option value="ADI">Ahmedabad (ADI)</option>
+            </select>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Active minutes</div>
-          <div class="stat-value" id="activeMinutesDisplay">0<span class="stat-unit">min</span></div>
+        <div class="swap-icon" id="swapStations" title="Swap stations">⇄</div>
+        <div class="station-input">
+            <label>To</label>
+            <select id="toStation">
+                <option value="BCT">Mumbai Central (BCT)</option>
+                <option value="NDLS">New Delhi (NDLS)</option>
+                <option value="HWH">Howrah (HWH)</option>
+                <option value="MAS">Chennai Central (MAS)</option>
+                <option value="SBC">Bengaluru (SBC)</option>
+                <option value="PUNE">Pune (PUNE)</option>
+                <option value="ADI">Ahmedabad (ADI)</option>
+            </select>
         </div>
-      </div>
-
-      <div class="progress-section">
-        <div class="goal-header">
-          <span>🔥 Daily goal</span>
-          <span id="goalProgressText">0 / 300 kcal</span>
+        <div class="date-input">
+            <label>Date</label>
+            <input type="date" id="journeyDate" value="2025-06-15">
         </div>
-        <div class="progress-bar-bg">
-          <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-        </div>
-      </div>
-
-      <div class="quick-actions">
-        <button class="btn" id="quickAddCalories" title="Add 25 kcal">➕ 25 kcal</button>
-        <button class="btn" id="quickAddMinute" title="Add 1 active minute">⏱️ +1 min</button>
-        <button class="btn btn-primary" id="completeWorkoutBtn">🏁 Complete workout</button>
-      </div>
+        <button class="search-btn" id="searchBtn">
+            <span>🔍</span> Search
+        </button>
     </div>
 
-    <!-- RIGHT PANEL: interactive timer + exercises -->
-    <div class="control-panel">
-      <div class="exercise-selector" id="exerciseSelector">
-        <div class="exercise-option active" data-exercise="running" data-rate="10" data-emoji="🏃">
-          <span class="exercise-emoji">🏃</span>
-          <span class="exercise-name">Running</span>
-          <span class="exercise-cal">10 kcal/min</span>
-        </div>
-        <div class="exercise-option" data-exercise="cycling" data-rate="8" data-emoji="🚴">
-          <span class="exercise-emoji">🚴</span>
-          <span class="exercise-name">Cycling</span>
-          <span class="exercise-cal">8 kcal/min</span>
-        </div>
-        <div class="exercise-option" data-exercise="yoga" data-rate="4" data-emoji="🧘">
-          <span class="exercise-emoji">🧘</span>
-          <span class="exercise-name">Yoga</span>
-          <span class="exercise-cal">4 kcal/min</span>
-        </div>
-        <div class="exercise-option" data-exercise="hiit" data-rate="12" data-emoji="💥">
-          <span class="exercise-emoji">💥</span>
-          <span class="exercise-name">HIIT</span>
-          <span class="exercise-cal">12 kcal/min</span>
-        </div>
-      </div>
-
-      <div class="timer-area">
-        <div class="timer-label">SESSION TIMER</div>
-        <div class="timer-display" id="timerDisplay">00:00</div>
-        <div class="timer-controls">
-          <button class="timer-btn" id="startTimerBtn">▶ START</button>
-          <button class="timer-btn" id="pauseTimerBtn" disabled>⏸ PAUSE</button>
-          <button class="timer-btn" id="resetTimerBtn">↺ RESET</button>
-        </div>
-      </div>
-
-      <div class="calorie-badge">
-        <span>🔥 BURN RATE</span>
-        <span class="calorie-value" id="currentBurnRate">10</span>
-        <span>kcal/min</span>
-      </div>
-
-      <div class="reset-area">
-        <button class="reset-btn" id="resetAllStats">reset all stats</button>
-      </div>
+    <!-- results header -->
+    <div class="results-header">
+        <h2>Available trains</h2>
+        <p id="routeInfo">NDLS → BCT · 15 Jun</p>
     </div>
-  </div>
 
-  <div class="footer-note">
-    ⚡ click exercise · start timer · watch calories grow
-  </div>
+    <!-- train list will be injected here -->
+    <div class="train-list" id="trainList"></div>
+
+    <!-- selected ticket / feedback -->
+    <div class="selected-ticket" id="selectedTicket">
+        <span class="label">✨ Selected ticket</span>
+        <span class="value" id="selectedTicketText">none</span>
+    </div>
 </div>
 
 <script>
-  (function() {
-    // ---------- STATE ----------
-    let totalCalories = 0;               // total kcal burned
-    let totalActiveSeconds = 0;          // total active seconds (for minutes display)
-    const DAILY_GOAL = 300;              // kcal
+    (function() {
+        // ---------- STATIC TRAIN DATABASE ----------
+        const trainsDB = [
+            { id: 1, name: 'Rajdhani Express', number: '12951', from: 'NDLS', to: 'BCT', dep: '16:25', arr: '08:35', dur: '16h 10m', price: 2850, seats: 42, type: 'Superfast' },
+            { id: 2, name: 'Duronto Express', number: '12259', from: 'NDLS', to: 'BCT', dep: '22:15', arr: '15:40', dur: '17h 25m', price: 2450, seats: 18, type: 'Duronto' },
+            { id: 3, name: 'Shatabdi Express', number: '12002', from: 'NDLS', to: 'BCT', dep: '06:00', arr: '14:45', dur: '8h 45m', price: 1890, seats: 7, type: 'Shatabdi' },
+            { id: 4, name: 'August Kranti Raj', number: '12953', from: 'NDLS', to: 'BCT', dep: '17:35', arr: '10:55', dur: '17h 20m', price: 2650, seats: 31, type: 'Rajdhani' },
+            { id: 5, name: 'Paschim Express', number: '12925', from: 'NDLS', to: 'BCT', dep: '11:20', arr: '13:15', dur: '25h 55m', price: 1120, seats: 78, type: 'Express' },
+            { id: 6, name: 'Golden Temple Mail', number: '12903', from: 'NDLS', to: 'BCT', dep: '04:30', arr: '05:45', dur: '25h 15m', price: 1240, seats: 53, type: 'Mail' },
+            { id: 7, name: 'Howrah Duronto', number: '12273', from: 'NDLS', to: 'HWH', dep: '08:50', arr: '06:10', dur: '21h 20m', price: 2350, seats: 22, type: 'Duronto' },
+            { id: 8, name: 'Sealdah Rajdhani', number: '12313', from: 'NDLS', to: 'HWH', dep: '16:50', arr: '09:55', dur: '17h 05m', price: 2750, seats: 12, type: 'Rajdhani' },
+            { id: 9, name: 'Coromandel Express', number: '12841', from: 'HWH', to: 'MAS', dep: '14:50', arr: '09:45', dur: '18h 55m', price: 1750, seats: 64, type: 'Superfast' },
+            { id: 10, name: 'Chennai Mail', number: '12601', from: 'MAS', to: 'SBC', dep: '22:30', arr: '05:45', dur: '7h 15m', price: 890, seats: 45, type: 'Mail' },
+            { id: 11, name: 'Mysuru Express', number: '12609', from: 'MAS', to: 'SBC', dep: '07:15', arr: '13:50', dur: '6h 35m', price: 750, seats: 33, type: 'Express' },
+            { id: 12, name: 'Deccan Queen', number: '12123', from: 'PUNE', to: 'BCT', dep: '07:15', arr: '10:25', dur: '3h 10m', price: 560, seats: 88, type: 'Superfast' },
+            { id: 13, name: 'Shatabdi (Pune)', number: '12027', from: 'PUNE', to: 'BCT', dep: '17:40', arr: '20:50', dur: '3h 10m', price: 690, seats: 27, type: 'Shatabdi' },
+            { id: 14, name: 'Gujarat Express', number: '12901', from: 'ADI', to: 'BCT', dep: '22:00', arr: '06:35', dur: '8h 35m', price: 1320, seats: 51, type: 'Express' },
+        ];
 
-    // timer state
-    let timerInterval = null;
-    let timerSeconds = 0;               // current session timer in seconds
-    let isTimerRunning = false;
+        // ---------- DOM elements ----------
+        const fromSelect = document.getElementById('fromStation');
+        const toSelect = document.getElementById('toStation');
+        const journeyDate = document.getElementById('journeyDate');
+        const searchBtn = document.getElementById('searchBtn');
+        const swapBtn = document.getElementById('swapStations');
+        const trainListDiv = document.getElementById('trainList');
+        const routeInfo = document.getElementById('routeInfo');
+        const selectedTicketText = document.getElementById('selectedTicketText');
 
-    // selected exercise (default running)
-    let selectedExercise = {
-      name: 'running',
-      rate: 10,          // kcal per minute
-      emoji: '🏃'
-    };
+        // state
+        let currentTrains = [];
+        let selectedTrainId = null;
 
-    // DOM elements
-    const caloriesBurnedDisplay = document.getElementById('caloriesBurnedDisplay');
-    const activeMinutesDisplay = document.getElementById('activeMinutesDisplay');
-    const goalProgressText = document.getElementById('goalProgressText');
-    const progressFill = document.getElementById('progressFill');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const currentBurnRate = document.getElementById('currentBurnRate');
-
-    const startBtn = document.getElementById('startTimerBtn');
-    const pauseBtn = document.getElementById('pauseTimerBtn');
-    const resetTimerBtn = document.getElementById('resetTimerBtn');
-    const resetAllStatsBtn = document.getElementById('resetAllStats');
-
-    const quickAddCalories = document.getElementById('quickAddCalories');
-    const quickAddMinute = document.getElementById('quickAddMinute');
-    const completeWorkoutBtn = document.getElementById('completeWorkoutBtn');
-
-    const exerciseOptions = document.querySelectorAll('.exercise-option');
-
-    // ---------- HELPER FUNCTIONS ----------
-    function formatTime(sec) {
-      const mins = Math.floor(sec / 60);
-      const remainingSec = sec % 60;
-      return `${mins.toString().padStart(2, '0')}:${remainingSec.toString().padStart(2, '0')}`;
-    }
-
-    // update all UI stats (calories, minutes, goal, progress bar)
-    function updateStatsUI() {
-      // calories display (round to integer)
-      caloriesBurnedDisplay.innerHTML = `${Math.floor(totalCalories)}<span class="stat-unit">kcal</span>`;
-      
-      // active minutes: show full minutes (floor) from totalActiveSeconds
-      const activeMinutes = Math.floor(totalActiveSeconds / 60);
-      activeMinutesDisplay.innerHTML = `${activeMinutes}<span class="stat-unit">min</span>`;
-      
-      // daily goal progress
-      const progressPercent = Math.min((totalCalories / DAILY_GOAL) * 100, 100);
-      progressFill.style.width = `${progressPercent}%`;
-      goalProgressText.textContent = `${Math.floor(totalCalories)} / ${DAILY_GOAL} kcal`;
-    }
-
-    // update timer display from timerSeconds
-    function updateTimerDisplay() {
-      timerDisplay.textContent = formatTime(timerSeconds);
-    }
-
-    // update the UI when exercise changes (burn rate + active class)
-    function updateExerciseUI() {
-      // update burn rate display
-      currentBurnRate.textContent = selectedExercise.rate;
-
-      // update active class on options
-      exerciseOptions.forEach(opt => {
-        const ex = opt.dataset.exercise;
-        if (ex === selectedExercise.name) {
-          opt.classList.add('active');
-        } else {
-          opt.classList.remove('active');
+        // ---------- helper: format date ----------
+        function formatDate(dateStr) {
+            if (!dateStr) return '15 Jun';
+            const d = new Date(dateStr + 'T00:00:00');
+            if (isNaN(d)) return '15 Jun';
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
         }
-      });
-    }
 
-    // add calories (and optionally active seconds) with real-time sync
-    function addCalories(amount, activeSecondsToAdd = 0) {
-      if (amount <= 0 && activeSecondsToAdd <= 0) return;
+        // ---------- update route header ----------
+        function updateRouteHeader() {
+            const fromCode = fromSelect.value;
+            const toCode = toSelect.value;
+            const dateFormatted = formatDate(journeyDate.value);
+            routeInfo.textContent = `${fromCode} → ${toCode} · ${dateFormatted}`;
+        }
 
-      totalCalories = Math.min(totalCalories + amount, 9999); // cap to avoid overflow
-      if (activeSecondsToAdd > 0) {
-        totalActiveSeconds += activeSecondsToAdd;
-      }
-      updateStatsUI();
-    }
+        // ---------- filter trains by from & to ----------
+        function filterTrains() {
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            return trainsDB.filter(t => t.from === from && t.to === to);
+        }
 
-    // central tick function called every second when timer is running
-    function timerTick() {
-      if (!isTimerRunning) return; // safety
+        // ---------- render train list ----------
+        function renderTrains() {
+            const trains = filterTrains();
+            currentTrains = trains;
 
-      // increase session timer
-      timerSeconds += 1;
-      updateTimerDisplay();
+            // clear selected ticket if it's not in the list
+            if (selectedTrainId && !trains.some(t => t.id === selectedTrainId)) {
+                selectedTrainId = null;
+                selectedTicketText.textContent = 'none';
+            }
 
-      // calculate calories burned this second
-      const caloriesPerSecond = selectedExercise.rate / 60;
-      const caloriesThisTick = caloriesPerSecond;   // fractional
-      
-      // accumulate calories and active seconds
-      totalCalories += caloriesThisTick;            // fractional calories
-      totalActiveSeconds += 1;                      // 1 second of activity
+            if (trains.length === 0) {
+                trainListDiv.innerHTML = `<div class="no-trains">🚫 No trains found for this route.<br>Try another pair of stations.</div>`;
+                return;
+            }
 
-      // keep UI in sync
-      updateStatsUI();
-    }
+            let html = '';
+            trains.forEach(train => {
+                const isSelected = (selectedTrainId === train.id);
+                const seatsAvailable = train.seats > 0;
+                const seatLabel = seatsAvailable ? `${train.seats} seats left` : 'Sold out';
+                const seatClass = seatsAvailable ? 'seats-left' : 'seats-left sold-out';
+                // We'll style sold out differently
+                const priceFormatted = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(train.price);
 
-    // start timer
-    function startTimer() {
-      if (isTimerRunning) return;
-      if (timerInterval) clearInterval(timerInterval);
+                html += `
+                    <div class="train-card" data-train-id="${train.id}">
+                        <div class="train-info">
+                            <div class="train-name">
+                                ${train.name}
+                                <span class="train-number">${train.number}</span>
+                            </div>
+                            <div class="train-type">🚄 ${train.type}</div>
+                        </div>
+                        <div class="timings">
+                            <div class="depart">
+                                <span class="time">${train.dep}</span>
+                                <span class="station-code">${train.from}</span>
+                            </div>
+                            <div class="duration">
+                                <span>${train.dur}</span>
+                                <span class="arrow">→</span>
+                            </div>
+                            <div class="arrive">
+                                <span class="time">${train.arr}</span>
+                                <span class="station-code">${train.to}</span>
+                            </div>
+                        </div>
+                        <div class="price-section">
+                            <div class="price">${priceFormatted}<small> /person</small></div>
+                            <div class="${seatsAvailable ? 'seats-left' : 'seats-left sold-out'}" style="${!seatsAvailable ? 'background:#f1e0de;color:#a14337;' : ''}">
+                                ${seatsAvailable ? `${train.seats} seats left` : 'Sold out'}
+                            </div>
+                        </div>
+                        <button class="book-btn" data-book-id="${train.id}" ${!seatsAvailable ? 'disabled' : ''}>
+                            ${isSelected ? '✓ Selected' : 'Book now'}
+                        </button>
+                    </div>
+                `;
+            });
 
-      isTimerRunning = true;
-      startBtn.disabled = true;
-      pauseBtn.disabled = false;
+            trainListDiv.innerHTML = html;
 
-      timerInterval = setInterval(() => {
-        timerTick();
-      }, 1000);
-    }
+            // attach event listeners to book buttons
+            document.querySelectorAll('.book-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const trainId = parseInt(btn.dataset.bookId, 10);
+                    handleBooking(trainId);
+                });
+            });
 
-    // pause timer
-    function pauseTimer() {
-      if (!isTimerRunning) return;
-      isTimerRunning = false;
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
+            // also clicking the card selects train (optional)
+            document.querySelectorAll('.train-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // avoid when clicking book button (already handled)
+                    if (e.target.closest('.book-btn')) return;
+                    const trainId = parseInt(card.dataset.trainId, 10);
+                    handleSelectTrain(trainId);
+                });
+            });
+        }
 
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    }
+        // ---------- select train (without booking) ----------
+        function handleSelectTrain(trainId) {
+            const train = trainsDB.find(t => t.id === trainId);
+            if (!train) return;
+            if (train.seats <= 0) {
+                alert('This train is sold out.');
+                return;
+            }
+            if (selectedTrainId === trainId) {
+                // deselect
+                selectedTrainId = null;
+                selectedTicketText.textContent = 'none';
+            } else {
+                selectedTrainId = trainId;
+                selectedTicketText.textContent = `${train.name} (${train.number}) · ${train.dep} → ${train.arr}`;
+            }
+            renderTrains();  // re-render to update button labels
+        }
 
-    // reset session timer (not stats)
-    function resetTimer() {
-      // if running, stop it
-      if (isTimerRunning) {
-        pauseTimer(); // this also clears interval
-      }
-      // reset timer seconds
-      timerSeconds = 0;
-      updateTimerDisplay();
-      // re-enable start, disable pause
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
-    }
+        // ---------- booking action (book / select) ----------
+        function handleBooking(trainId) {
+            const train = trainsDB.find(t => t.id === trainId);
+            if (!train) return;
+            if (train.seats <= 0) {
+                alert('This train is sold out.');
+                return;
+            }
 
-    // reset ALL stats (calories, minutes, timer)
-    function resetAllStats() {
-      // stop timer if running
-      if (isTimerRunning) {
-        pauseTimer();
-      }
-      // reset stats
-      totalCalories = 0;
-      totalActiveSeconds = 0;
-      timerSeconds = 0;
-      
-      // update UI
-      updateStatsUI();
-      updateTimerDisplay();
-      
-      // ensure buttons reflect reset state
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
-    }
+            // if already selected, maybe "book" it (simulate confirmation)
+            if (selectedTrainId === trainId) {
+                // proceed to booking (simulate)
+                const fromCode = fromSelect.value;
+                const toCode = toSelect.value;
+                const dateStr = journeyDate.value;
+                alert(`✅ Ticket booked!\n${train.name} (${train.number})\n${fromCode} → ${toCode}\nDate: ${dateStr}\nPrice: ₹${train.price}\n\nThank you for choosing RailGo!`);
+                // reset selection (optional)
+                selectedTrainId = null;
+                selectedTicketText.textContent = 'none';
+                // decrease seats (simulate)
+                if (train.seats > 0) train.seats -= 1;
+                renderTrains();
+            } else {
+                // select this train
+                selectedTrainId = trainId;
+                selectedTicketText.textContent = `${train.name} (${train.number}) · ${train.dep} → ${train.arr}`;
+                renderTrains();
+            }
+        }
 
-    // complete workout: add calories from current session based on timer, then reset timer
-    function completeWorkout() {
-      // if timer is running, pause first to avoid race
-      if (isTimerRunning) {
-        pauseTimer();
-      }
+        // ---------- swap stations ----------
+        function swapStations() {
+            const fromVal = fromSelect.value;
+            const toVal = toSelect.value;
+            fromSelect.value = toVal;
+            toSelect.value = fromVal;
 
-      // if there is a running session (timerSeconds > 0), we can add a "bonus" or just keep the already accumulated calories.
-      // but the calories are already being added per second in real time.
-      // To make the button useful, we'll add a small bonus: 5 extra calories for completing.
-      // and also reset the timer.
-      if (timerSeconds > 0) {
-        addCalories(5, 0);  // +5 kcal bonus
-      }
-      
-      // reset session timer (but keep accumulated stats)
-      timerSeconds = 0;
-      updateTimerDisplay();
+            // reset selected train because route changes
+            selectedTrainId = null;
+            selectedTicketText.textContent = 'none';
+            updateRouteHeader();
+            renderTrains();
+        }
 
-      // reset timer state
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
+        // ---------- reset selection when route / date changes ----------
+        function resetSelectionAndUpdate() {
+            selectedTrainId = null;
+            selectedTicketText.textContent = 'none';
+            updateRouteHeader();
+            renderTrains();
+        }
 
-      // optional: flash feedback
-      completeWorkoutBtn.textContent = '✔ DONE!';
-      setTimeout(() => {
-        completeWorkoutBtn.textContent = '🏁 Complete workout';
-      }, 800);
-    }
+        // ---------- event listeners ----------
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetSelectionAndUpdate();
+        });
 
-    // ---------- EVENT LISTENERS ----------
+        swapBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            swapStations();
+        });
 
-    // exercise selection
-    exerciseOptions.forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        const name = opt.dataset.exercise;
-        const rate = parseFloat(opt.dataset.rate);
-        const emoji = opt.dataset.emoji || '🏋️';
+        fromSelect.addEventListener('change', resetSelectionAndUpdate);
+        toSelect.addEventListener('change', resetSelectionAndUpdate);
+        journeyDate.addEventListener('change', () => {
+            updateRouteHeader();
+            // not resetting train selection because date change doesn't change train list
+            // but we update header
+        });
 
-        // update selected exercise
-        selectedExercise = { name, rate, emoji };
-        
-        // update UI (burn rate & active class)
-        updateExerciseUI();
+        // extra: update header on date change (already done)
+        // initial render
+        (function init() {
+            // set default date to today+15 days for demo
+            const today = new Date();
+            const future = new Date(today);
+            future.setDate(today.getDate() + 15);
+            const yyyy = future.getFullYear();
+            const mm = String(future.getMonth() + 1).padStart(2, '0');
+            const dd = String(future.getDate()).padStart(2, '0');
+            journeyDate.value = `${yyyy}-${mm}-${dd}`;
 
-        // if timer is running, new calorie rate applies automatically on next tick
-      });
-    });
+            // set initial from/to pairs (NDLS -> BCT)
+            fromSelect.value = 'NDLS';
+            toSelect.value = 'BCT';
+            updateRouteHeader();
+            renderTrains();
+        })();
 
-    // start / pause / reset timer
-    startBtn.addEventListener('click', startTimer);
-    pauseBtn.addEventListener('click', pauseTimer);
-    resetTimerBtn.addEventListener('click', resetTimer);
-
-    // quick add calories (25 kcal, no active seconds)
-    quickAddCalories.addEventListener('click', () => {
-      addCalories(25, 0);
-    });
-
-    // quick add 1 minute of activity (60 seconds active)
-    quickAddMinute.addEventListener('click', () => {
-      totalActiveSeconds += 60;
-      // optionally add some calories? but it's "active minute" not calorie addition
-      // just add active time to keep the stat realistic, but no calorie change.
-      // However we can add a tiny bit?  keep simple: only add active seconds.
-      // but to keep stats consistent, we'll add 0 calories.
-      updateStatsUI();
-    });
-
-    // complete workout button
-    completeWorkoutBtn.addEventListener('click', completeWorkout);
-
-    // reset all stats
-    resetAllStatsBtn.addEventListener('click', resetAllStats);
-
-    // ---------- INITIAL SETUP ----------
-    function initialise() {
-      // set default exercise (running) - already selected, but ensure UI sync
-      updateExerciseUI();
-      
-      // set initial stats display
-      updateStatsUI();
-      
-      // timer display
-      updateTimerDisplay();
-
-      // ensure buttons correct
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
-      
-      // set burn rate display
-      currentBurnRate.textContent = selectedExercise.rate;
-
-      // add a tiny starting hint - no extra actions needed.
-    }
-
-    initialise();
-
-    // when page unload, clean interval
-    window.addEventListener('beforeunload', () => {
-      if (timerInterval) clearInterval(timerInterval);
-    });
-
-  })();
+    })();
 </script>
 </body>
 </html>
